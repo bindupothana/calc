@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html ng-app="calculatorApp">
+<head>
+	<style>		.section{clear:both;padding:0;margin:0}.col{background-color:#f4f4f4;height:20px;text-align:center;display:block;float:left;margin:1% 0 1% 1.6%}.col:first-child{margin-left:0}.col:hover{background-color:#f0f0ff}.group:before,.group:after{content:"";display:table}.group:after{clear:both}.c3of4{width:74.6%}.c1of4{width:23.8%}
+	</style>
+</head>
+<body>
+	
+    <div ng-controller="calculatorController">
+		<div class="section group"> 
+			<div class="col c3of4">{{ calculator.currentDisplay }}</div>
+			<div ng-click="resetClicked()" class="col c1of4">C</div>
+		</div>
+		<div class="section group"> 
+			<div ng-click="numberButtonClicked(1)" class="col c1of4">1</div>
+			<div ng-click="numberButtonClicked(2)" class="col c1of4">2</div>
+			<div ng-click="numberButtonClicked(3)" class="col c1of4">3</div>
+			<div ng-click="operationButtonClicked('+')" class="col c1of4">+</div>
+		</div>
+		<div class="section group"> 
+			<div ng-click="numberButtonClicked(4)" class="col c1of4">4</div>
+			<div ng-click="numberButtonClicked(5)" class="col c1of4">5</div>
+			<div ng-click="numberButtonClicked(6)" class="col c1of4">6</div>
+			<div ng-click="operationButtonClicked('-')" class="col c1of4">-</div>
+		</div>
+		<div class="section group"> 
+			<div ng-click="numberButtonClicked(7)" class="col c1of4">7</div>
+			<div ng-click="numberButtonClicked(8)" class="col c1of4">8</div>
+			<div ng-click="numberButtonClicked(9)" class="col c1of4">9</div>
+			<div ng-click="enterClicked()" class="col c1of4">Enter</div>
+		</div>
+	</div>
+
+    
+
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+
+    <script type="text/javascript">
+		
+		calculatorModel = {
+			result: 0, 
+			operation: "",
+			currentNumber: "0",
+			currentDisplay: "", 
+			
+			reset: function() {
+				this.result = 0; 
+				this.operation = "";
+				this.currentNumber = "0";
+				this.currentDisplay = "" ;
+			},
+			
+			setOperation: function(operationToSet) {
+				this.operation = operationToSet;
+				if(calculatorModel.currentNumber === "0") {
+					this.currentDisplay += "0";
+				}
+				
+				this.currentDisplay += " " + this.operation + " ";
+				this.calculate();
+				
+				this.currentNumber = "";
+			},
+
+			calculate: function() {
+
+				switch(this.operation) {
+					case "+":
+						this.result = this.result + parseFloat(this.currentNumber);
+						break;
+						
+					case "-":
+						this.result = this.result - parseFloat(this.currentNumber);
+						break;
+				}
+			}			
+			
+		};
+		
+        
+        var calculatorApp = angular.module('calculatorApp', ['calculatorModule']);
+        var calculatorModule = angular.module('calculatorModule', []);
+
+        
+        calculatorModule.controller('calculatorController', ['$scope', function ($scope) {
+            $scope.calculator = calculatorModel;
+			$scope.numberButtonClicked = function(clickedNumber) {
+				if(calculatorModel.currentNumber === "0") {
+					calculatorModel.currentNumber = "";
+					calculatorModel.currentDisplay = "";
+				}
+				
+				calculatorModel.currentNumber += clickedNumber;
+				calculatorModel.currentDisplay += clickedNumber;
+			};
+			
+			$scope.operationButtonClicked = function(clickedOperation) {
+				calculatorModel.setOperation(clickedOperation);				
+			};
+			
+			$scope.enterClicked = function() {
+				calculatorModel.calculate();
+				calculatorModel.currentDisplay = calculatorModel.result;
+			};
+			
+			$scope.resetClicked = function() {
+				calculatorModel.reset();
+			};
+        }]);
+    </script>
+	
+	
+</body>
+</html>
